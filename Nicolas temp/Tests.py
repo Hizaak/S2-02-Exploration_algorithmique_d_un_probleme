@@ -8,9 +8,8 @@ arrets={}
 for c in range (len( donneesbus)):
     arrets[donneesbus['arret'][c]]=[float(donneesbus['lattitude'][c].replace(",",".")),float(donneesbus['longitude'][c].replace(",",".")),donneesbus['listesucc'][c].strip('],[').replace("'", '').replace(' ', '').split(',')]
 
-nom=[]
-for c in arrets:
-    nom.append(c)
+nom=list(arrets.keys())
+
 
 
 
@@ -49,7 +48,7 @@ def voisin(nom_som):
 
 def dic_adjacence(donnees):
     dic={}                                                                              #Création d'un dictionnaire vide
-    for i in donnees.keys():                                                            #Récupération des clés du dictionnaires "donnees"
+    for i in donnees:                                                            #Récupération des clés du dictionnaires "donnees"
         dic[i]=donnees[i][2]                                                            #Récupération des arrêts succedant de l'arrêts i
     return dic                                                                          #Retour du dictionnaire d'adjacence crée
 
@@ -65,7 +64,8 @@ dic_bus=dic_adjacence(arrets)
 def lst_adjacence(donnees):
     """Cette fonction renvoie une matrice d'ajacence à partir d'un dictionnaire d'adjacence
     """
-    lst = [[0 for _ in range(len(donnees))]for _ in range(len(donnees))]                #Création d'un tableau à double entrées initialisé à 0 pour tous les arrêts
+    lst = [[0]*len(donnees) for _ in range(len(donnees))]                #Création d'un tableau à double entrées initialisé à 0 pour tous les arrêts
+
     for c in arrets:                                                                    #Pour tous les arrêts dans le dictionnaires des arrêts
         succ=voisin(c)                                                                  #On enregistre la liste des arrêts succedant de l'arrêt c
         for i in succ:                                                                  #Pour tous ses successeurs
@@ -118,7 +118,7 @@ def distarc(arret1,arret2):
         res=np.Inf                              #La distance est dite Infinie
     return res
 
-
+print(distarrets('NOVE','FINE'))
 
 
 
@@ -132,4 +132,6 @@ for i in range (len(poids_bus)):                      #On parcours la matrice po
 
 
 
-
+for i in range (len(poids_bus)):                      #On parcours la matrice poids_bus
+    for y in range(len(poids_bus[i])):                
+        print(poids_bus[i][y],mat_bus[i][y],'\n')
