@@ -6,7 +6,7 @@ donneesbus=pd.read_csv('donneesbus.csv',sep=';')
 
 arrets={}
 for c in range (len( donneesbus)):
-    arrets[donneesbus['arret'][c]]=[float(donneesbus['lattitude'][c].replace(",",".")),float(donneesbus['longitude'][c].replace(",",".")),donneesbus['listesucc'][c].strip('],[').replace("'", '').replace(' ', '').split(',')]
+    arrets[donneesbus['arret'][c]]=[float(donneesbus['lattitude'][c].replace(",",".")),float(donneesbus['longitude'][c].replace(",",".")),list(donneesbus['listesucc'][c].replace('[','').replace(']','').replace("'","").replace(" ","").split(","))]
 
 nom=list(arrets.keys())
 
@@ -79,6 +79,7 @@ mat_bus=lst_adjacence(arrets)
 
 
 
+
 #Question E
 
 def distanceGPS(latA,latB,longA,longB):
@@ -118,7 +119,7 @@ def distarc(arret1,arret2):
         res=np.Inf                              #La distance est dite Infinie
     return res
 
-print(distarrets('NOVE','FINE'))
+
 
 
 
@@ -132,6 +133,33 @@ for i in range (len(poids_bus)):                      #On parcours la matrice po
 
 
 
-for i in range (len(poids_bus)):                      #On parcours la matrice poids_bus
-    for y in range(len(poids_bus[i])):                
-        print(poids_bus[i][y],mat_bus[i][y],'\n')
+
+def djiksrta(depart,arrive):
+    dernier_idx=indice_som(depart)
+    distance=[np.Inf for _ in range(len(nom_arrets))]
+    poids=0
+    ok=False
+    pred=[None for _ in range(len(nom_arrets))]
+    while not ok:
+        print(distance)
+        for c in voisin(nom(dernier_idx)):
+            ok=False
+            if distance[indice_som(c)]>distarc(nom(dernier_idx),c):
+                ok=True
+                distance[indice_som(c)]=distarc(nom(dernier_idx),c)+poids
+                pred[indice_som(c)]=dernier_idx
+                poids=distance[indice_som(c)]
+        dernier_idx=distance.index(min(distance))
+    distance[dernier_idx]=0
+       
+            
+    
+
+
+    
+    
+
+        
+    
+
+djiksrta('NOVE','MURG')
