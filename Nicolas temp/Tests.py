@@ -138,48 +138,6 @@ for i in range (len(poids_bus)):                      #On parcours la matrice po
 
 
 
-
-def conv(l):
-    r=[]
-    for c in range (len( l)):
-        r.append((nom(l[c]),l[c]))
-    return r
-
-
-def djiksrta2(depart,arrive):
-        dernier_idx=indice_som(depart)
-        pred=[None for _ in range(len(nom_arrets))]
-        pred[indice_som(depart)]=indice_som(depart)
-        vu=[]
-        distance=[np.Inf for _ in range(len(nom_arrets))]
-        distance[indice_som(depart)]=0
-        dernier_idx=indice_som(depart)
-        while dernier_idx!=-1:
-                poids_pred=distance[pred[dernier_idx]]
-                input()
-                dernier_idx=min_exclude(distance,vu)
-                vu.append(dernier_idx)
-                print(nom(dernier_idx)," devient le prochain arret, c'est le pred de",nom(pred[dernier_idx]),"le poids passe de",poids_pred, "à ",poids_pred+distance[dernier_idx])
-                print(nom(dernier_idx), "a pour voisins",voisin(nom(dernier_idx)))
-                for s in voisin(nom(dernier_idx)):
-                    print('distance entre ',nom(dernier_idx),'et',s,distarc(nom(dernier_idx),s)," le poids est de ",distance[dernier_idx]," pour un total de ",distarc(nom(dernier_idx),s)+distance[dernier_idx])
-                    if distance[indice_som(s)]>poids_pred+distarc(nom(dernier_idx),s):
-                        print("         nouveau chemin pour ",s," grace a ",nom(dernier_idx),"il était à",distance[indice_som(s)]," et maintenant il est à ",distance[dernier_idx]+distarc(nom(dernier_idx),s))
-                        distance[indice_som(s)]=distance[dernier_idx]+distarc(nom(dernier_idx),s)
-                        pred[indice_som(s)]=dernier_idx
-                    else: 
-                        pass
-                        print("     ",s, "reste a ",distance[indice_som(s)], " car ", distarc(nom(dernier_idx),s)+distance[dernier_idx] , "n'est pas interessant")
-                print("les sommet ignoré sont ",conv(vu))
-                for i in range(2):
-                    print()
-                
-                
-
-        #print(len(vu))    
-        return distance
-    
-
 def min_exclude(distance,marque):
     min=-1
     for i in range (len(distance)):
