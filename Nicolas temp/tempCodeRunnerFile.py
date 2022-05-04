@@ -1,0 +1,1 @@
+ford('PRIM','MONT')==djiksrta('PRIM','MON
