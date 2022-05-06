@@ -165,8 +165,8 @@ def min_exclude(distance,marque):
 
 
 def djiksrta(depart,arrive):
-    '''Cette fonction prend en paramètres deux deux arrêts et renvoient le plus court chemin, sous forme de la liste des arrêts parcourus ainsi, que la distance minimum en
-     utilisant la méthode de djiksrta.'''
+    '''Cette fonction prend en paramètres deux arrêts et renvoie le plus court chemin, sous forme de la liste des arrêts parcourus ainsi, que la distance minimum en
+     utilisant la méthode de Djiksrta.'''
     
     distance=[(np.Inf,None) for _ in range(len(nom_arrets))]            #Tous les arrets ont une distances infinie et pas de pred
     marque=[indice_som(depart)]                                         #Liste de tous les arrets dont la distance minimum a déjà était trouvé
@@ -182,16 +182,15 @@ def djiksrta(depart,arrive):
         marque.append(arret_actuel)                                    #On ajoute l'arret actuel dans les arrets marqués                                  
 
     #-------------------------------reconstruction---------------------------------------
-    chemin=[arrive]                                             #On crée une liste de allant de l'arrivée vers le depart
     arret_actuel=indice_som(arrive)                             #On parcours les arrets en commançant par l'arrivée
+    chemin=[nom(arret_actuel)]                                       #On crée une liste de allant de l'arrivée vers le depart
     while arret_actuel!=indice_som(depart):                     #Tant que l'arret actuel n'est pas le départ on continue le chemin                   
         pred=distance[arret_actuel][1]                          #Prédécesseur de l'arret actuel   
-        chemin.append(nom(pred))                                #On ajoute le Prédécesseur au chemin 
         arret_actuel=pred                                       #L'arret actuel devient le Prédécesseur
-        
+        chemin.append(nom(arret_actuel))                        #On ajoute le Prédécesseur au chemin 
 
     chemin.reverse()                                           #On inverse la liste pour obtenir le chemin depart->arrivée
-    return (chemin,distance[indice_som(arrive)][0])            #On retourne le chemin et la distance entre ces deux arrets
+    return (chemin,round(distance[indice_som(arrive)][0]))            #On retourne le chemin et la distance entre ces deux arrets
 
             
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -210,9 +209,9 @@ def djiksrta(depart,arrive):
 
 
 def difference(nouvelle,ancienne):
-    """Renvois les indices des valeurs differentes dans une listes
+    """Renvoie les indices des valeurs differentes dans une liste
         - len(liste1)==len(liste2)""" 
-    res=[] 
+    res=[]
     for y in range(len(nouvelle)):
         if nouvelle[y]!=ancienne[y]: #Si les deux valeurs (ici des distances) sont différentes
             res.append(y)            #On ajoute l'indice i (representant un arret) à la liste de retours
@@ -220,8 +219,8 @@ def difference(nouvelle,ancienne):
 
 
 def ford(depart,arrive):
-    """Cette fonction prend en paramètres deux deux arrêts et renvoient le plus court chemin, sous forme de la liste des arrêts parcourus ainsi, que la distance minimum en utilisant la 
-    méthode de bellman."""
+    """Cette fonction prend en paramètres deux arrêts et renvoie le plus court chemin, sous forme de la liste des arrêts parcourus ainsi, que la distance minimum en utilisant la 
+    méthode de Bellman Ford-Kalaba."""
     distance=[(np.Inf,None) for _ in range(len(nom_arrets))]    #Tous les arrets ont une distances infinie et pas de pred
     distance[indice_som(depart)]=(0,indice_som(depart))         #On ajoute la distance de l'arret de départ soit 0, son pred est lui même
     a_traiter=[indice_som(depart)]                              #Une liste de tous les arrets que l'ont doit traiter
@@ -245,7 +244,7 @@ def ford(depart,arrive):
         
 
     chemin.reverse()                                           #On inverse la liste pour obtenir le chemin depart->arrivée
-    return (chemin,distance[indice_som(arrive)][0])            #On retourne le chemin et la distance entre ces deux arrets
+    return (chemin,round(distance[indice_som(arrive)][0]))            #On retourne le chemin et la distance entre ces deux arrets
     
 
 
@@ -261,26 +260,45 @@ def ford(depart,arrive):
 
 
 def floyd(depart,arrive):
-    """Cette fonction prend en paramètres deux deux arrêts et renvoient le plus court chemin, sous forme de la liste des arrêts parcourus ainsi, que la distance minimum en utilisant la 
+    """Cette fonction prend en paramètres deux arrêts et renvoient le plus court chemin, sous forme de la liste des arrêts parcourus ainsi, que la distance minimum en utilisant la 
     méthode de floyd wharshall."""
-    M=[[x[:] for x in poids_bus]]                               #Creation de M0
+    M0=[x[:] for x in poids_bus]                               #Creation de M0
     #------------Creation de P0---------
-    P=[[x[:] for x in poids_bus]]
-    print(len(P[0]))                                            
-    for i in range (len(P[0])):
-        for j in range(len(P[0])):
-            if P[0][i][j]==np.Inf or P[0][i][j]==0:
-                P[0][i][j]=None
+    P0=[x[:] for x in poids_bus]                                           
+    for i in range (len(P0)):
+        for j in range(len(P0)):
+            if P0[i][j]==np.Inf or P0[i][j]==0:
+                P0[i][j]=None
             else:
-                P[0][i][j]=i
+                P0[i][j]=i
     #-------------------------------------
 
-    for k in range(1,len(M[0])):
-        M.append([x[:] for x in M[k-1]])
-        P.append([x[:] for x in P[k-1]])
-        for i in range(len(M[0])):
-            for j in range(len(M[0])):
-                pass
+    n=len(nom_arrets)
+    k=0
+    while k < n :
+        MN=[x[:] for x in M0]
+        PN=[x[:] for x in P0]  
+        for i in range (n):
+            for j in range (n):
+                if i!=j and M0[k][j]+M0[i][k]<M0[i][j]:
+                    MN[i][j]=M0[k][j]+M0[i][k]
+                    PN[i][j]=P0[k][j]
+                else:
+                    MN[i][j]=M0[i][j]
+                    PN[i][j]=P0[i][j]
+        M0=[x[:] for x in MN]
+        P0=[x[:] for x in PN]
+        k+=1
+    arret_actuel=indice_som(arrive)
+    chemin=[nom(arret_actuel)]
+    while arret_actuel!=indice_som(depart):
+
+        pred=P0[indice_som(depart)][arret_actuel]
+        chemin.append(nom(pred))
+        arret_actuel=pred
+    chemin.reverse()
+    return chemin,round(M0[indice_som(depart)][indice_som(arrive)])
+
 
                 
 
@@ -289,19 +307,7 @@ def floyd(depart,arrive):
 
 
                     
-    chemin=[arrive]                                             #On crée une liste de allant de l'arrivée vers le depart
-    arret_actuel=indice_som(arrive)                             #On parcours les arrets en commançant par l'arrivée
-    while arret_actuel!=indice_som(depart):                     #Tant que l'arret actuel n'est pas le départ on continue le chemin                   
-        pred=P[k][arret_actuel][indice_som(depart)]                          #Prédécesseur de l'arret actuel   
-        chemin.append(nom(pred))                                #On ajoute le Prédécesseur au chemin 
-        print(f"le pred de {nom(arret_actuel)} est {nom(pred)}")
-        sleep(0.2)
-        arret_actuel=pred                                       #L'arret actuel devient le Prédécesseur
-        
-        
 
-    chemin.reverse()                                           #On inverse la liste pour obtenir le chemin depart->arrivée
-    return (chemin,M[k][arret_actuel][indice_som(depart)])            #On retourne le chemin et la distance entre ces deux arrets           
         
         
     
@@ -311,4 +317,18 @@ def floyd(depart,arrive):
 
 
 #print(ford('PRIM','MONT')==djiksrta('PRIM','MONT'))
-print(floyd('PRIM','MONT'))
+t=floyd('PRIM','MONT')
+y=djiksrta('PRIM','MONT')
+z=ford('PRIM','MONT')
+print(t,'\n',y,'\n',z,'\n')
+print(t==z and y==z and t==y)
+
+
+
+
+
+t=floyd('PTAR','LAVI')
+y=djiksrta('PTAR','LAVI')
+z=ford('PTAR','LAVI')
+print(t,'\n',y,'\n',z,'\n')
+print(t==z and y==z and t==y)
