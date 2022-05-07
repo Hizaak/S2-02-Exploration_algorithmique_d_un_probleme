@@ -178,7 +178,7 @@ def ford(depart,arrive):
         chemin.append(nom(pred))                                #On ajoute le Prédécesseur au chemin 
         arret_actuel=pred                                       #L'arret actuel devient le prédécesseur
     chemin.reverse()                                           #On inverse la liste pour obtenir le chemin depart->arrivée
-    return (chemin,distance[indice_som(arrive)][0])            #On retourne le chemin et la distance entre ces deux arrets
+    return (chemin,round(distance[indice_som(arrive)][0]))            #On retourne le chemin et la distance entre ces deux arrets
     
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~FIN FORD~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -222,38 +222,36 @@ def floyd(depart,arrive):
         chemin.append(nom(pred))
         arret_actuel=pred
     chemin.reverse()
-    return chemin,M0[indice_som(depart)][indice_som(arrive)]
+    return (chemin,round(M0[indice_som(depart)][indice_som(arrive)]))
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ A* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-                
-
-
-
-
-
-                    
-
-        
-        
+def filePrioritaire(file):
+    min=np.Inf
+    for i in range(len(file)):
+        if file[i][1]<=min:
+            min=file[i][1]
+    stock=file[i]
+    file.pop(i)
+    return file[i]
     
-
-
-
-
-
-#print(ford('PRIM','MONT')==djiksrta('PRIM','MONT'))
-t=floyd('PRIM','MONT')
-y=djiksrta('PRIM','MONT')
-z=ford('PRIM','MONT')
-print(t,'\n',y,'\n',z,'\n')
-print(t==z and y==z and t==y)
-
-
-
-
-
-t=floyd('PTAR','LAVI')
-y=djiksrta('PTAR','LAVI')
-z=ford('PTAR','LAVI')
-print(t,'\n',y,'\n',z,'\n')
-print(t==z and y==z and t==y)
+def compareParHeuristique(n1,n2):
+    if n1[1]<n2[1]:
+        return 1
+    elif n1[1]==n2[1]:
+        return 0
+    else :
+        return -1
+    
+def astar(depart,arrive):
+    closedList=[]
+    openList=[]
+    openList.append(depart)
+    while openList!=[]:
+        u = filePrioritaire(openList)
+        if u[0] == depart and u[1]==arrive:
+            pass
+            
+# POO ? (heapq)
