@@ -2,9 +2,6 @@ import pandas as pd
 from math import sin, cos, acos, pi
 import numpy as np
 
-#graphique
-import tkinter as tk
-
 donneesbus=pd.read_csv(r'./donneesbus.csv',sep=';')
 
 arrets={}
@@ -200,6 +197,7 @@ def floyd(depart,arrive):
                 P0[i][j]=None
             else:
                 P0[i][j]=i
+    print("test")
     #-------------------------------------
 
     n=len(nom_arrets)
@@ -227,158 +225,3 @@ def floyd(depart,arrive):
         arret_actuel=pred
     chemin.reverse()
     return (chemin,round(M0[indice_som(depart)][indice_som(arrive)]))
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ A* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-def filePrioritaire(file):
-    min=np.Inf
-    for i in range(len(file)):
-        if file[i][1]<=min:
-            min=file[i][1]
-    stock=file[i]
-    file.pop(i)
-    return file[i]
-    
-def compareParHeuristique(n1,n2):
-    if n1[1]<n2[1]:
-        return 1
-    elif n1[1]==n2[1]:
-        return 0
-    else :
-        return -1
-    
-def astar(depart,arrive):
-    closedList=[]
-    openList=[]
-    openList.append(depart)
-    while openList!=[]:
-        u = filePrioritaire(openList)
-        if u[0] == depart and u[1]==arrive:
-            pass
-                
-# POO ? (heapq)
-
-
-
-
-minX=np.inf
-minY=np.inf
-maxX=-100
-maxY=-100
-
-
-
-for i in arrets:
-    if arrets[i][0]<= minX:
-        minX=arrets[i][0]
-    if arrets[i][1]<= minY:
-        minY=arrets[i][1]
-    if arrets[i][0]>= maxX:
-        maxX=arrets[i][0]
-    if arrets[i][1]>= maxY:
-        maxY=arrets[i][1]
-
-
-
-Mainwindow = tk.Tk()
-
-# declare the window
-
-# set window title
-Mainwindow.title("Python GUI App")
-# set window width and height
-Mainwindow.attributes('-fullscreen',True)
-# set window background color
-Mainwindow.configure(bg='lightgray')
-Mainwindow.wm_attributes('-transparentcolor','purple')
-
-# PARAM(S)
-
-padding = 30
-screen_width = 1920
-screen_height = 1080
-
-oval_height = 12
-oval_width = 46
-
-oval_color = "white"
-background_color = "lightblue"
-line_color = "red"
-text_color = "black"
-
-
-
-# .CODE
-
-canvas = tk.Canvas(Mainwindow,width=screen_width,height=screen_height,bg=background_color)
-
-
-zone_width = screen_width - 2 * padding
-zone_height = screen_height - 2 * padding
-
-for i in arrets:
-    for j in arrets[i][2]:
-        canvas.create_line((arrets[i][0]-minX)*zone_width/(maxX-minX)+oval_width/2, 
-                           (arrets[i][1]-minY)*zone_height/(maxY-minY)+oval_height/2, 
-                           (arrets[j][0]-minX)*zone_width/(maxX-minX)+oval_width/2, 
-                           (arrets[j][1]-minY)*zone_height/(maxY-minY)+oval_height/2, 
-                           fill=line_color)
-
-
-for i in arrets:    
-    pecX = (arrets[i][0]-minX)*zone_width/(maxX-minX)
-    pecY = (arrets[i][1]-minY)*zone_height/(maxY-minY)
-    canvas.create_oval(pecX-len(i),
-                       pecY,
-                       pecX+oval_width+len(i),
-                       pecY+oval_height,
-                       fill=oval_color)
-    canvas.create_text(pecX+oval_width/2,pecY+oval_height/2,text=i)
-
-
-
-
-canvas.place(x=0,y=0)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Mainwindow.mainloop()

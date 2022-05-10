@@ -260,15 +260,10 @@ def astar(depart,arrive):
                 
 # POO ? (heapq)
 
-
-
-
 minX=np.inf
 minY=np.inf
 maxX=-100
 maxY=-100
-
-
 
 for i in arrets:
     if arrets[i][0]<= minX:
@@ -338,7 +333,19 @@ for i in arrets:
     canvas.create_text(pecX+oval_width/2,pecY+oval_height/2,text=i)
 
 
+"""
+for i in arrets:    
+    canvas.create_oval((arrets[i][0]-minX)*zone_width/(maxX-minX)-(padding-oval_width/2),
+                       (arrets[i][1]-minY)*zone_height/(maxY-minY)-(padding-oval_height/2),
+                       (arrets[i][0]-minX)*zone_width/(maxX-minX)+(padding-oval_width/2),
+                       (arrets[i][1]-minY)*zone_height/(maxY-minY)+(padding-oval_height/2),
+                       fill=oval_color)
+    
+    #tk.Label(canvas,text=i, bg='purple').place(x=(arrets[i][0]-minX)*1900/(maxX-minX),y=(arrets[i][1]-minY)*1060/(maxY-minY))
+    canvas.create_text((arrets[i][0]-minX)*zone_width/(maxX-minX)+padding,(arrets[i][1]-minY)*zone_height/(maxY-minY)+padding,text=i)
 
+"""
+  
 
 canvas.place(x=0,y=0)
 
