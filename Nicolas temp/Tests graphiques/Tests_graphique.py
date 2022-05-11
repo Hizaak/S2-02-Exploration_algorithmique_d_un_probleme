@@ -5,6 +5,10 @@ import numpy as np
 
 
 
+
+                                           #On inverse la liste pour obtenir le chemin dans le bon ordre (départ vers arrivée)
+
+
 # JEU DE DONNÉES
 donneesbus=pd.read_csv(r'./donneesbus.csv',sep=';')
 arrets={}
