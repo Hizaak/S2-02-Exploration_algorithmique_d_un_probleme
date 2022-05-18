@@ -1,9 +1,7 @@
 import pandas as pd
 from math import sin, cos, acos, pi
 import numpy as np
-
-#graphique
-import tkinter as tk
+import threading as th
 
 donneesbus=pd.read_csv(r'./donneesbus.csv',sep=';')
 
@@ -200,6 +198,7 @@ def floyd(depart,arrive):
                 P0[i][j]=None
             else:
                 P0[i][j]=i
+    print("test")
     #-------------------------------------
 
     n=len(nom_arrets)
@@ -228,164 +227,45 @@ def floyd(depart,arrive):
     chemin.reverse()
     return (chemin,round(M0[indice_som(depart)][indice_som(arrive)]))
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ A* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def filePrioritaire(file):
-    min=np.Inf
-    for i in range(len(file)):
-        if file[i][1]<=min:
-            min=file[i][1]
-    stock=file[i]
-    file.pop(i)
-    return file[i]
+class thread(th.Thread):
+    def __init__(self):
+        th.Thread.__init__(self)
+    def run(self):
+        global depart, arrivee
+        distance=[(np.Inf,None) for _ in range(len(nom_arrets))]
+        distance[indice_som(depart)]=(0,indice_som(depart))                 # On ajoute la distance de l'arret de départ soit 0, son pred est lui même
+        marque=[indice_som(depart)]                                         # Liste de tous les arrets dont la distance minimum a déjà été trouvée
+        arret_actuel=indice_som(depart)                                     # arret_actuel est l'arret a partir du quel on va effectuer l'étape
+        
+        while arret_actuel!=indice_som(arrivee):                             # On peut raccourcir djikstra en s'arretant dès que l'on doit traiter le sommet d'arrivée
+            for proche in voisin(nom(arret_actuel)):                                                                              #Pour tous les arrets voisins de l'arret observé                           
+                if indice_som(proche) not in marque:                                                                              #Si l'arret n'est pas déjà marqué (on pourra pas l'ameliorer de toute facon)
+                    if distance[indice_som(proche)][0]>distance[arret_actuel][0]+distarc(nom(arret_actuel),proche):               #Si ce nouveau chemin est plus avantageux que l'ancien 
+                        distance[indice_som(proche)]=(distance[arret_actuel][0]+distarc(nom(arret_actuel),proche),arret_actuel)   #On met a jour sa distance et son prédécesseu
+            arret_actuel=min_exclude(distance,marque)                      #On récupere l'arret avec la distance minimale parmis les arrets non marqués
+            marque.append(arret_actuel)                                    #On ajoute l'arret actuel dans les arrets marqués                                  
     
-def compareParHeuristique(n1,n2):
-    if n1[1]<n2[1]:
-        return 1
-    elif n1[1]==n2[1]:
-        return 0
-    else :
-        return -1
     
-def astar(depart,arrive):
-    closedList=[]
-    openList=[]
-    openList.append(depart)
-    while openList!=[]:
-        u = filePrioritaire(openList)
-        if u[0] == depart and u[1]==arrive:
-            pass
-                
-# POO ? (heapq)
-
-minX=np.inf
-minY=np.inf
-maxX=-100
-maxY=-100
-
-for i in arrets:
-    if arrets[i][0]<= minX:
-        minX=arrets[i][0]
-    if arrets[i][1]<= minY:
-        minY=arrets[i][1]
-    if arrets[i][0]>= maxX:
-        maxX=arrets[i][0]
-    if arrets[i][1]>= maxY:
-        maxY=arrets[i][1]
-
-
-
-Mainwindow = tk.Tk()
-
-# declare the window
-
-# set window title
-Mainwindow.title("Python GUI App")
-# set window width and height
-Mainwindow.attributes('-fullscreen',True)
-# set window background color
-Mainwindow.configure(bg='lightgray')
-Mainwindow.wm_attributes('-transparentcolor','purple')
-
-# PARAM(S)
-
-padding = 30
-screen_width = 1920
-screen_height = 1080
-
-oval_height = 12
-oval_width = 46
-
-oval_color = "white"
-background_color = "lightblue"
-line_color = "red"
-text_color = "black"
-
-
-
-# .CODE
-
-canvas = tk.Canvas(Mainwindow,width=screen_width,height=screen_height,bg=background_color)
-
-
-zone_width = screen_width - 2 * padding
-zone_height = screen_height - 2 * padding
-
-for i in arrets:
-    for j in arrets[i][2]:
-        canvas.create_line((arrets[i][0]-minX)*zone_width/(maxX-minX)+oval_width/2, 
-                           (arrets[i][1]-minY)*zone_height/(maxY-minY)+oval_height/2, 
-                           (arrets[j][0]-minX)*zone_width/(maxX-minX)+oval_width/2, 
-                           (arrets[j][1]-minY)*zone_height/(maxY-minY)+oval_height/2, 
-                           fill=line_color)
-
-
-for i in arrets:    
-    pecX = (arrets[i][0]-minX)*zone_width/(maxX-minX)
-    pecY = (arrets[i][1]-minY)*zone_height/(maxY-minY)
-    canvas.create_oval(pecX-len(i),
-                       pecY,
-                       pecX+oval_width+len(i),
-                       pecY+oval_height,
-                       fill=oval_color)
-    canvas.create_text(pecX+oval_width/2,pecY+oval_height/2,text=i)
-
-
-"""
-for i in arrets:    
-    canvas.create_oval((arrets[i][0]-minX)*zone_width/(maxX-minX)-(padding-oval_width/2),
-                       (arrets[i][1]-minY)*zone_height/(maxY-minY)-(padding-oval_height/2),
-                       (arrets[i][0]-minX)*zone_width/(maxX-minX)+(padding-oval_width/2),
-                       (arrets[i][1]-minY)*zone_height/(maxY-minY)+(padding-oval_height/2),
-                       fill=oval_color)
+        # Reconstruction
+        arret_actuel=indice_som(arrivee)                             #On parcours les arrets en commançant par l'arrivée
+        chemin=[nom(arret_actuel)]                                       #On crée une liste de allant de l'arrivée vers le depart
+        while arret_actuel!=indice_som(depart):                     #Tant que l'arret actuel n'est pas le départ on continue le chemin                   
+            pred=distance[arret_actuel][1]                          #Prédécesseur de l'arret actuel   
+            arret_actuel=pred                                       #L'arret actuel devient le Prédécesseur
+            chemin.append(nom(arret_actuel))                        #On ajoute le Prédécesseur au chemin 
     
-    #tk.Label(canvas,text=i, bg='purple').place(x=(arrets[i][0]-minX)*1900/(maxX-minX),y=(arrets[i][1]-minY)*1060/(maxY-minY))
-    canvas.create_text((arrets[i][0]-minX)*zone_width/(maxX-minX)+padding,(arrets[i][1]-minY)*zone_height/(maxY-minY)+padding,text=i)
+        chemin.reverse() 
 
-"""
-  
-
-canvas.place(x=0,y=0)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Mainwindow.mainloop()
+depart = None
+arrivee = None
+def djiksrta_graphique(departt,arriveee):
+    global depart, arrivee
+    depart = depart
+    arrivee = arrivee
+    
+    thread().start()
+    
+    '''Cette fonction prend en paramètres deux arrêts et renvoie le plus court chemin, sous forme de la liste des arrêts parcourus ainsi, que la distance minimum en
+    utilisant la méthode de Djiksrta.'''
+    # Initialisation
