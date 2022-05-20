@@ -136,7 +136,34 @@ def djiksrta(depart,arrive):
     chemin.reverse()                                            #On inverse la liste pour obtenir le chemin dans le bon ordre (départ vers arrivée)
     return (chemin,round(distance[indice_som(arrive)][0]))      # Renvoie : chemin (liste), distance (entier)
 
-            
+def djiksrta(depart,arrive):
+    '''Cette fonction prend en paramètres deux arrêts et renvoie le plus court chemin, sous forme de la liste des arrêts parcourus ainsi, que la distance minimum en
+    utilisant la méthode de Djiksrta.'''
+    # Initialisation
+    distance=[(np.Inf,None) for _ in range(len(nom_arrets))]
+    distance[indice_som(depart)]=(0,indice_som(depart))                 # On ajoute la distance de l'arret de départ soit 0, son pred est lui même
+    marque=[indice_som(depart)]                                         # Liste de tous les arrets dont la distance minimum a déjà été trouvée
+    arret_actuel=indice_som(depart)                                     # arret_actuel est l'arret a partir du quel on va effectuer l'étape
+    
+    while arret_actuel!=indice_som(arrive):                             # On peut raccourcir djikstra en s'arretant dès que l'on doit traiter le sommet d'arrivée
+        for proche in voisin(nom(arret_actuel)):                                                                              #Pour tous les arrets voisins de l'arret observé                           
+            if indice_som(proche) not in marque:                                                                              #Si l'arret n'est pas déjà marqué (on pourra pas l'ameliorer de toute facon)
+                if distance[indice_som(proche)][0]>distance[arret_actuel][0]+distarc(nom(arret_actuel),proche):               #Si ce nouveau chemin est plus avantageux que l'ancien 
+                    distance[indice_som(proche)]=(distance[arret_actuel][0]+distarc(nom(arret_actuel),proche),arret_actuel)   #On met a jour sa distance et son prédécesseu
+        arret_actuel=min_exclude(distance,marque)                      #On récupere l'arret avec la distance minimale parmis les arrets non marqués
+        marque.append(arret_actuel)                                    #On ajoute l'arret actuel dans les arrets marqués                                  
+
+
+    # Reconstruction
+    arret_actuel=indice_som(arrive)                             #On parcours les arrets en commançant par l'arrivée
+    chemin=[nom(arret_actuel)]                                       #On crée une liste de allant de l'arrivée vers le depart
+    while arret_actuel!=indice_som(depart):                     #Tant que l'arret actuel n'est pas le départ on continue le chemin                   
+        pred=distance[arret_actuel][1]                          #Prédécesseur de l'arret actuel   
+        arret_actuel=pred                                       #L'arret actuel devient le Prédécesseur
+        chemin.append(nom(arret_actuel))                        #On ajoute le Prédécesseur au chemin 
+
+    chemin.reverse()                                            #On inverse la liste pour obtenir le chemin dans le bon ordre (départ vers arrivée)
+    return (chemin,round(distance[indice_som(arrive)][0]))      # Renvoie : chemin (liste), distance (entier)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~FIN DJIKSTRA~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

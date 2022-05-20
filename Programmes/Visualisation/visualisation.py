@@ -1,7 +1,7 @@
 from graphics import *
 from methodes import *
 
-win = GraphWin("Réseau Chronoplus", 1000, 1000)
+win = GraphWin("Réseau Chronoplus", 900, 900)
 
 fond_carte = Image(Point(495,480), "fond_carte.png")
 fond_carte.draw(win)
