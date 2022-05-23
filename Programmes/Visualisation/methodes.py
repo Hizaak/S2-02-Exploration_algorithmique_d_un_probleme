@@ -317,4 +317,4 @@ def test():
     print("Floyd-Warshall :",duree_floyd)
     
     if res_dijkstra==res_ford and res_dijkstra==res_floyd:
-        print("Les trois algorithmes renvoient bien le même résultat.")
+        print("Les trois algorithmes renvoient bien le meme resultat.")

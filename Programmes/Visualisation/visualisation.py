@@ -291,7 +291,7 @@ def dessinerGraphe():
     fond_carte = Image(Point(495,480), "fond_carte.png")
     fond_carte.draw(win)
 
-    for i in arrets:    
+    for i in arrets:
         for j in arrets[i][2]:
             affichage = Line(Point((arrets[i][1]-minX)*ratio+5,
                         delta-(arrets[i][0]-minY)*facteur_Y+5),
@@ -305,14 +305,39 @@ def dessinerGraphe():
         affichage.setWidth(1)
         affichage.draw(win)
         
-def main():
+pressed_key=None
+def random_arret():
+    global pressed_key
     while True:
-
         dessinerGraphe()
-        arret1 = random.choice(list(arrets.keys()))
-        arret2 = random.choice(list(arrets.keys()))
-        dijkstra_graphique(arret1,arret2,win)
-        win.getMouse()
-    win.close()
+        if pressed_key == None :
+            pressed_key = win.getKey()
+        if pressed_key=="d":
+            arret1 = random.choice(list(arrets.keys()))
+            arret2 = random.choice(list(arrets.keys()))
+            dijkstra_graphique(arret1,arret2,win)
+            pressed_key = win.getKey()
+            random_arret()
+        if pressed_key=="b":
+            arret1 = random.choice(list(arrets.keys()))
+            arret2 = random.choice(list(arrets.keys()))
+            ford_graphique(arret1,arret2,win)
+            pressed_key = win.getKey()
+            random_arret()
+        if pressed_key=="f":
+            arret1 = random.choice(list(arrets.keys()))
+            arret2 = random.choice(list(arrets.keys()))
+            floyd_graphique(arret1,arret2,win)
+            pressed_key = win.getKey()
+            random_arret()
+        else:
+            win.close()
+            return 0
     
-main()
+    
+def main(arret1,arret2):
+    dessinerGraphe()
+    dijkstra_graphique(arret1,arret2,win)
+    win.getMouse()  
+    win.close()
+random_arret()
