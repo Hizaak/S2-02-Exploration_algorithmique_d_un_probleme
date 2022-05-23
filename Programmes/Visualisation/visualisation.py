@@ -309,22 +309,24 @@ pressed_key=None
 def random_arret():
     global pressed_key
     while True:
-        dessinerGraphe()
         if pressed_key == None :
             pressed_key = win.getKey()
         if pressed_key=="d":
+            dessinerGraphe()
             arret1 = random.choice(list(arrets.keys()))
             arret2 = random.choice(list(arrets.keys()))
             dijkstra_graphique(arret1,arret2,win)
             pressed_key = win.getKey()
             random_arret()
         if pressed_key=="b":
+            dessinerGraphe()
             arret1 = random.choice(list(arrets.keys()))
             arret2 = random.choice(list(arrets.keys()))
             ford_graphique(arret1,arret2,win)
             pressed_key = win.getKey()
             random_arret()
         if pressed_key=="f":
+            dessinerGraphe()
             arret1 = random.choice(list(arrets.keys()))
             arret2 = random.choice(list(arrets.keys()))
             floyd_graphique(arret1,arret2,win)
