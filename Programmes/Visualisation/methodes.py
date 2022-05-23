@@ -1,8 +1,13 @@
+"""
+Authors : Nicolas DARGAZANLI et Alexandre MAURICE, en TD 1 TP 1
+Remarque : A* n'est pas fonctionnel mais les traces du code sont laissées
+"""
+from time import sleep
+from graphics import *
 import pandas as pd
 from math import sin, cos, acos, pi
 import numpy as np
-import threading as th
-
+import time as t
 donneesbus=pd.read_csv(r'./donneesbus.csv',sep=';')
 
 arrets={}
@@ -38,6 +43,7 @@ def dic_adjacence(donnees):
     for i in donnees:                                                            #Récupération des clés du dictionnaires "donnees"
         dic[i]=donnees[i][2]                                                            #Récupération des arrêts succedant de l'arrêts i
     return dic                                                                          #Retour du dictionnaire d'adjacence crée
+
 
 def lst_adjacence(donnees):
     """Cette fonction renvoie une matrice d'ajacence à partir d'un dictionnaire d'adjacence
@@ -107,7 +113,7 @@ def min_exclude(distance,marque):
                 min=i                               #L'arret i devient le nouveau min
     return min          #Retourne l'arret avec la distance minimale
 
-def djiksrta(depart,arrive):
+def dijkstra(depart,arrive):
     '''Cette fonction prend en paramètres deux arrêts et renvoie le plus court chemin, sous forme de la liste des arrêts parcourus ainsi, que la distance minimum en
     utilisant la méthode de Djiksrta.'''
     # Initialisation
@@ -136,38 +142,10 @@ def djiksrta(depart,arrive):
     chemin.reverse()                                            #On inverse la liste pour obtenir le chemin dans le bon ordre (départ vers arrivée)
     return (chemin,round(distance[indice_som(arrive)][0]))      # Renvoie : chemin (liste), distance (entier)
 
-def djiksrta(depart,arrive):
-    '''Cette fonction prend en paramètres deux arrêts et renvoie le plus court chemin, sous forme de la liste des arrêts parcourus ainsi, que la distance minimum en
-    utilisant la méthode de Djiksrta.'''
-    # Initialisation
-    distance=[(np.Inf,None) for _ in range(len(nom_arrets))]
-    distance[indice_som(depart)]=(0,indice_som(depart))                 # On ajoute la distance de l'arret de départ soit 0, son pred est lui même
-    marque=[indice_som(depart)]                                         # Liste de tous les arrets dont la distance minimum a déjà été trouvée
-    arret_actuel=indice_som(depart)                                     # arret_actuel est l'arret a partir du quel on va effectuer l'étape
-    
-    while arret_actuel!=indice_som(arrive):                             # On peut raccourcir djikstra en s'arretant dès que l'on doit traiter le sommet d'arrivée
-        for proche in voisin(nom(arret_actuel)):                                                                              #Pour tous les arrets voisins de l'arret observé                           
-            if indice_som(proche) not in marque:                                                                              #Si l'arret n'est pas déjà marqué (on pourra pas l'ameliorer de toute facon)
-                if distance[indice_som(proche)][0]>distance[arret_actuel][0]+distarc(nom(arret_actuel),proche):               #Si ce nouveau chemin est plus avantageux que l'ancien 
-                    distance[indice_som(proche)]=(distance[arret_actuel][0]+distarc(nom(arret_actuel),proche),arret_actuel)   #On met a jour sa distance et son prédécesseu
-        arret_actuel=min_exclude(distance,marque)                      #On récupere l'arret avec la distance minimale parmis les arrets non marqués
-        marque.append(arret_actuel)                                    #On ajoute l'arret actuel dans les arrets marqués                                  
-
-
-    # Reconstruction
-    arret_actuel=indice_som(arrive)                             #On parcours les arrets en commançant par l'arrivée
-    chemin=[nom(arret_actuel)]                                       #On crée une liste de allant de l'arrivée vers le depart
-    while arret_actuel!=indice_som(depart):                     #Tant que l'arret actuel n'est pas le départ on continue le chemin                   
-        pred=distance[arret_actuel][1]                          #Prédécesseur de l'arret actuel   
-        arret_actuel=pred                                       #L'arret actuel devient le Prédécesseur
-        chemin.append(nom(arret_actuel))                        #On ajoute le Prédécesseur au chemin 
-
-    chemin.reverse()                                            #On inverse la liste pour obtenir le chemin dans le bon ordre (départ vers arrivée)
-    return (chemin,round(distance[indice_som(arrive)][0]))      # Renvoie : chemin (liste), distance (entier)
+            
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~FIN DJIKSTRA~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~DEBUT FORD~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -208,7 +186,7 @@ def ford(depart,arrive):
         arret_actuel=pred                                       #L'arret actuel devient le prédécesseur
     chemin.reverse()                                           #On inverse la liste pour obtenir le chemin depart->arrivée
     return (chemin,round(distance[indice_som(arrive)][0]))            #On retourne le chemin et la distance entre ces deux arrets
-    
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~FIN FORD~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -216,34 +194,41 @@ def ford(depart,arrive):
 def floyd(depart,arrive):
     """Cette fonction prend en paramètres deux arrêts et renvoient le plus court chemin, sous forme de la liste des arrêts parcourus ainsi, que la distance minimum en utilisant la 
     méthode de floyd wharshall."""
-    M0=[x[:] for x in poids_bus]                               #Creation de M0
-    #------------Creation de P0---------
-    P0=[x[:] for x in poids_bus]                                           
+    M0=[x[:] for x in poids_bus]                                #Initialisation de M0
+    P0=[x[:] for x in poids_bus]                                #Initialisation de P0
+    #Initialisation des prédécesseurs
     for i in range (len(P0)):
         for j in range(len(P0)):
             if P0[i][j]==np.Inf or P0[i][j]==0:
+                # Si +infini ou diagonale : Pas de prédécesseur connu ou existant
                 P0[i][j]=None
             else:
+                # Sinon, le prédécesseur est l'indice de la colonne
                 P0[i][j]=i
-    print("test")
     #-------------------------------------
 
-    n=len(nom_arrets)
-    k=0
-    while k < n :
-        MN=[x[:] for x in M0]
-        PN=[x[:] for x in P0]  
+    n=len(nom_arrets) # Taille de la matrice
+    k=0 # Numéro de l'étape (= tous les chemins de longueur <= k)
+    while k < n : # Condition d'arrêt : dépassement de la taille de la matrice
+        MN=[x[:] for x in M0] # Copie profonde de M0 vers MN
+        # Note importante : par la suite M0 représente MN et MN représente MN+1, n entier naturel
+        PN=[x[:] for x in P0] # Copie profonde de PO vers PN
+        # Même remarque
         for i in range (n):
             for j in range (n):
+                # Application de la formule permettant de passer de PN à PN+1
                 if i!=j and M0[k][j]+M0[i][k]<M0[i][j]:
                     MN[i][j]=M0[k][j]+M0[i][k]
                     PN[i][j]=P0[k][j]
                 else:
                     MN[i][j]=M0[i][j]
                     PN[i][j]=P0[i][j]
+        # Copies profondes
         M0=[x[:] for x in MN]
         P0=[x[:] for x in PN]
+        # Remarque : On écrase les matrices car toutes les informations sont contenues dans les matrices finales
         k+=1
+    # Reconstruction
     arret_actuel=indice_som(arrive)
     chemin=[nom(arret_actuel)]
     while arret_actuel!=indice_som(depart):
@@ -254,45 +239,82 @@ def floyd(depart,arrive):
     chemin.reverse()
     return (chemin,round(M0[indice_som(depart)][indice_som(arrive)]))
 
+"""
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Tentative pour A*... ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-class thread(th.Thread):
-    def __init__(self):
-        th.Thread.__init__(self)
-    def run(self):
-        global depart, arrivee
-        distance=[(np.Inf,None) for _ in range(len(nom_arrets))]
-        distance[indice_som(depart)]=(0,indice_som(depart))                 # On ajoute la distance de l'arret de départ soit 0, son pred est lui même
-        marque=[indice_som(depart)]                                         # Liste de tous les arrets dont la distance minimum a déjà été trouvée
-        arret_actuel=indice_som(depart)                                     # arret_actuel est l'arret a partir du quel on va effectuer l'étape
-        
-        while arret_actuel!=indice_som(arrivee):                             # On peut raccourcir djikstra en s'arretant dès que l'on doit traiter le sommet d'arrivée
-            for proche in voisin(nom(arret_actuel)):                                                                              #Pour tous les arrets voisins de l'arret observé                           
-                if indice_som(proche) not in marque:                                                                              #Si l'arret n'est pas déjà marqué (on pourra pas l'ameliorer de toute facon)
-                    if distance[indice_som(proche)][0]>distance[arret_actuel][0]+distarc(nom(arret_actuel),proche):               #Si ce nouveau chemin est plus avantageux que l'ancien 
-                        distance[indice_som(proche)]=(distance[arret_actuel][0]+distarc(nom(arret_actuel),proche),arret_actuel)   #On met a jour sa distance et son prédécesseu
-            arret_actuel=min_exclude(distance,marque)                      #On récupere l'arret avec la distance minimale parmis les arrets non marqués
-            marque.append(arret_actuel)                                    #On ajoute l'arret actuel dans les arrets marqués                                  
+def filePrioritaire(file):
+    min=np.Inf
+    for i in range(len(file)):
+        if file[i][1]<=min:
+            min=file[i][1]
+    stock=file[i]
+    file.pop(i)
+    return file[i]
     
-    
-        # Reconstruction
-        arret_actuel=indice_som(arrivee)                             #On parcours les arrets en commançant par l'arrivée
-        chemin=[nom(arret_actuel)]                                       #On crée une liste de allant de l'arrivée vers le depart
-        while arret_actuel!=indice_som(depart):                     #Tant que l'arret actuel n'est pas le départ on continue le chemin                   
-            pred=distance[arret_actuel][1]                          #Prédécesseur de l'arret actuel   
-            arret_actuel=pred                                       #L'arret actuel devient le Prédécesseur
-            chemin.append(nom(arret_actuel))                        #On ajoute le Prédécesseur au chemin 
-    
-        chemin.reverse() 
+def compareParHeuristique(n1,n2):
+    if n1[1]<n2[1]:
+        return 1
+    elif n1[1]==n2[1]:
+        return 0
+    else :
+        return -1
 
-depart = None
-arrivee = None
-def djiksrta_graphique(departt,arriveee):
-    global depart, arrivee
-    depart = depart
-    arrivee = arrivee
+
+
+def f(n,actualCost,arrivee):
+    return distarrets(n,arrivee)+actualCost
+
+def astar(depart,arrivee):
+    openList = [depart]
+    closedList=[]
+    heuristique={}
+    heuristique[depart]=0
+    parcours={}
+    parcours[depart]=depart
+    while len(openList) > 0:
+        n = None
+        for arret in openList:
+            if n == None or parcours[arret]+f(arret,heuristique[arret],arrivee) < heuristique[n]+f(n,heuristique[n],arrivee):
+                n=arret
+        if n == arrivee:
+            reconstruction=[]
+            while parcours[n] != n :
+                reconstruction.append(n)
+                n=parcours[n]
+            reconstruction.append(depart)
+            reconstruction.reverse()
+            return reconstruction
+        for voisinActuel in voisin(n):
+            print(parcours[n])
+            poids=parcours[n]
+            print(heuristique)
+            if voisinActuel not in openList and voisinActuel not in closedList:
+                openList.append(voisinActuel)
+                parcours[voisinActuel] = n
+                heuristique[voisinActuel] = heuristique[n] + poids
+        openList.remove(n)
+        closedList.append(n)
+        return None
+"""
+
+def test():
+    """Programme permettant de tester le temps d'exécution des différentes fonctions
+       On vérifie aussi si le résultat renvoyé le même
+       Remarque : l'exécution du test peut dépasser la minute"""
+    tmp_dijkstra = t.time()
+    res_dijkstra = dijkstra("NOVE","TROICR")
+    duree_dijkstra = t.time() - tmp_dijkstra
+    print("Dijkstra :",duree_dijkstra)
     
-    thread().start()
+    tmp_ford = t.time()
+    res_ford = ford("NOVE","TROICR")
+    duree_ford = t.time() - tmp_ford
+    print("Bellman-Ford Kalaba :",duree_ford)
     
-    '''Cette fonction prend en paramètres deux arrêts et renvoie le plus court chemin, sous forme de la liste des arrêts parcourus ainsi, que la distance minimum en
-    utilisant la méthode de Djiksrta.'''
-    # Initialisation
+    tmp_floyd = t.time()
+    res_floyd = floyd("NOVE","TROICR")
+    duree_floyd = t.time() - tmp_floyd
+    print("Floyd-Warshall :",duree_floyd)
+    
+    if res_dijkstra==res_ford and res_dijkstra==res_floyd:
+        print("Les trois algorithmes renvoient bien le même résultat.")
