@@ -3,7 +3,7 @@ from methodes import *
 from time import sleep
 import random
 win = GraphWin("Reseau Chronoplus", 900, 900)
-
+#win.setBackground("#000000")
 
 
 minX=np.Inf
@@ -212,38 +212,20 @@ def floyd_graphique(depart,arrive,win):
 
     n=len(nom_arrets) # Taille de la matrice
     k=0 # Numéro de l'étape (= tous les chemins de longueur <= k)
-    while k < n : # Condition d'arrêt : dépassement de la taille de la matrice
-        MN=[x[:] for x in M0] # Copie profonde de M0 vers MN
-        # Note importante : par la suite M0 représente MN et MN représente MN+1, n entier naturel
-        PN=[x[:] for x in P0] # Copie profonde de PO vers PN
-        booleen=True
-        # Même remarque
+    for k in range(n):
+        if nom(k)!=depart and nom(k)!=arrive:
+            affichage = Circle(Point((arrets[nom(k)][1]-minX)*ratio+5,
+                      delta-(arrets[nom(k)][0]-minY)*facteur_Y+5),4)
+            affichage.setFill("orange")
+            affichage.draw(win)
         for i in range (n):
             for j in range (n):
-                if booleen:
-                    affichage = Circle(Point((arrets[nom(j)][1]-minX)*ratio+5,
-                              delta-(arrets[nom(j)][0]-minY)*facteur_Y+5),4)
-                    affichage.setFill("orange")
-                    affichage.draw(win)
-                    booleen= False
-                else:
-                    affichage = Circle(Point((arrets[nom(j)][1]-minX)*ratio+5,
-                              delta-(arrets[nom(j)][0]-minY)*facteur_Y+5),4)
-                    affichage.setFill("purple")
-                    affichage.draw(win)
-                    booleen= True
+
                 # Application de la formule permettant de passer de PN à PN+1
-                if i!=j and M0[k][j]+M0[i][k]<M0[i][j]:
-                    MN[i][j]=M0[k][j]+M0[i][k]
-                    PN[i][j]=P0[k][j]
-                else:
-                    MN[i][j]=M0[i][j]
-                    PN[i][j]=P0[i][j]
-        # Copies profondes
-        M0=[x[:] for x in MN]
-        P0=[x[:] for x in PN]
+                if M0[k][j]+M0[i][k]<M0[i][j]:
+                    M0[i][j]=M0[k][j]+M0[i][k]
+                    P0[i][j]=P0[k][j]
         # Remarque : On écrase les matrices car toutes les informations sont contenues dans les matrices finales
-        k+=1
     # Reconstruction
     arret_actuel=indice_som(arrive)
     chemin=[nom(arret_actuel)]
@@ -310,6 +292,7 @@ def random_arret():
     global pressed_key
     while True:
         if pressed_key == None :
+            dessinerGraphe()
             pressed_key = win.getKey()
         if pressed_key=="d":
             dessinerGraphe()
