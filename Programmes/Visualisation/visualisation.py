@@ -14,6 +14,7 @@ minLat=np.Inf
 maxLong=np.NINF
 maxLat=np.NINF
 
+
 for i in arrets:
     if arrets[i][0] <= minLat:
         minLat=arrets[i][0]
@@ -33,13 +34,13 @@ if maxLat-minLat > maxLong-minLong:
     ratio=windowHeight/(maxLat-minLat)
 else:
     ratio=windowWidth/(maxLong-minLong)
-print(ratio)
+
 
 
 
 def afficherArret(arret,couleur,fill=True):
     affichage = Circle(Point((arrets[arret][1]-minLong)*ratio,
-                             windowHeight-(arrets[arret][0]-minLat)*ratio),4)
+                             windowHeight-(arrets[arret][0]-minLat)*ratio*1.37),4)
     if fill:
         affichage.setFill(couleur)
     affichage.draw(win)
@@ -47,9 +48,9 @@ def afficherArret(arret,couleur,fill=True):
 
 def tracerArc(arret1,arret2,couleur="black",largeur=1):
     affichage = Line(Point((arrets[arret1][1]-minLong)*ratio,
-                           windowHeight-(arrets[arret1][0]-minLat)*ratio),
+                           windowHeight-(arrets[arret1][0]-minLat)*ratio*1.37),
                      Point((arrets[arret2][1]-minLong)*ratio,
-                            windowHeight-(arrets[arret2][0]-minLat)*ratio))
+                            windowHeight-(arrets[arret2][0]-minLat)*ratio*1.37))
     affichage.setFill(couleur)
     affichage.setWidth(largeur)
     affichage.draw(win)
