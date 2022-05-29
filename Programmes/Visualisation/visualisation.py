@@ -115,14 +115,8 @@ def ford_graphique(depart,arrivee,win):
     distance=[(np.Inf,None) for _ in range(len(nom_arrets))]    #Tous les arrets ont une distances infinie et pas de predécesseur
     distance[indice_som(depart)]=(0,indice_som(depart))         #On ajoute la distance de l'arret de départ soit 0, son pred est lui même
     a_traiter=[indice_som(depart)]                              #Une liste de tous les arrets que l'ont doit traiter
-    affichage = Circle(Point((arrets[depart][1]-minLong)*ratio+5,
-              delta-(arrets[depart][0]-minLat)*facteur_Y+5),4)
-    affichage.setFill("blue")
-    affichage.draw(win)
-    affichage = Circle(Point((arrets[arrivee][1]-minLong)*ratio+5,
-              delta-(arrets[arrivee][0]-minLat)*facteur_Y+5),4)
-    affichage.setFill("blue")
-    affichage.draw(win)
+    afficherArret(depart, "blue")
+    afficherArret(arrivee, "blue")
     while a_traiter!=[]:                                        #Tant que cette liste n'est pas vide on continue la recherche, on assume donc qu'il n'y a pas de chemins absorbants
         distancepred=distance[:]                                #Copie de la liste de distance afin de la comparer après l'étape
         for atraiter in a_traiter:
@@ -200,27 +194,17 @@ def floyd_graphique(depart,arrivee,win):
             else:
                 # Sinon, le prédécesseur est l'indice de la colonne
                 P0[i][j]=i
-    affichage = Circle(Point((arrets[depart][1]-minLong)*ratio+5,
-              delta-(arrets[depart][0]-minLat)*facteur_Y+5),4)
-    affichage.setFill("blue")
-    affichage.draw(win)
-    affichage = Circle(Point((arrets[arrivee][1]-minLong)*ratio+5,
-              delta-(arrets[arrivee][0]-minLat)*facteur_Y+5),4)
-    affichage.setFill("blue")
-    affichage.draw(win)
+    afficherArret(depart, "blue")
+    afficherArret(arrivee, "blue")
     #-------------------------------------
 
     n=len(nom_arrets) # Taille de la matrice
     k=0 # Numéro de l'étape (= tous les chemins de longueur <= k)
     for k in range(n):
         if nom(k)!=depart and nom(k)!=arrivee:
-            affichage = Circle(Point((arrets[nom(k)][1]-minLong)*ratio+5,
-                      delta-(arrets[nom(k)][0]-minLat)*facteur_Y+5),4)
-            affichage.setFill("orange")
-            affichage.draw(win)
+            afficherArret(nom(k),"orange",True)
         for i in range (n):
             for j in range (n):
-
                 # Application de la formule permettant de passer de PN à PN+1
                 if M0[k][j]+M0[i][k]<M0[i][j]:
                     M0[i][j]=M0[k][j]+M0[i][k]
@@ -235,17 +219,11 @@ def floyd_graphique(depart,arrivee,win):
         chemin.append(nom(pred))
         arret_actuel=pred
 
-    affichage = Circle(Point((arrets[depart][1]-minLong)*ratio+5,
-              delta-(arrets[depart][0]-minLat)*facteur_Y+5),4)
-    affichage.setFill("blue")
-    affichage.draw(win)
-    affichage = Line(Point((arrets[arrivee][1]-minLong)*ratio+5,
-                delta-(arrets[arrivee][0]-minLat)*facteur_Y+5),
-         Point((arrets[chemin[1]][1]-minLong)*ratio+5,
-                delta-(arrets[chemin[1]][0]-minLat)*facteur_Y+5))
-    affichage.setWidth(3)
-    affichage.setFill("green")
-    affichage.draw(win)
+    afficherArret(depart, "blue")
+    afficherArret(arrivee, "blue")
+    
+    tracerArc(arrivee,chemin[1],"green",3)
+
     for i in range(len(chemin)):
         if chemin[i]!=arrivee and chemin[i]!=depart:
             affichage = Line(Point((arrets[chemin[i]][1]-minLong)*ratio+5,
