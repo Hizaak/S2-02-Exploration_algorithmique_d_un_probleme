@@ -1,6 +1,8 @@
 from graphics import *
 from methodes import *
+
 from time import sleep
+import time as t
 import random
 
 windowWidth = 1070
@@ -55,10 +57,25 @@ def tracerArc(arret1,arret2,couleur="black",largeur=1):
     affichage.setWidth(largeur)
     affichage.draw(win)
 
+appuyez_text="allala"
+def afficherDuree(tmpDepart):
+    global appuyez_text
+    try:
+        appuyez_text.undraw()
+    except:
+        pass
+    duree = t.time() - tmpDepart
+    appuyez_text=Text(Point(27,138), str(round(duree,2))+"s")
+    appuyez_text.draw(win)
 
+    
 def dijkstra_graphique(depart,arrivee,win):
     '''Cette fonction prend en paramètres deux arrêts et renvoie le plus court chemin, sous forme de la liste des arrêts parcourus ainsi, que la distance minimum en
     utilisant la méthode de Djiksrta.'''
+    tps_exec=Text(Point(73,117), "Temps d'exécution :")
+    tps_exec.draw(win)
+    tmp=t.time()
+    afficherDuree(tmp)
     # Initialisation
     distance=[(np.Inf,None) for _ in range(len(nom_arrets))]
     distance[indice_som(depart)]=(0,indice_som(depart))                 # On ajoute la distance de l'arret de départ soit 0, son pred est lui même
@@ -72,8 +89,10 @@ def dijkstra_graphique(depart,arrivee,win):
         for proche in voisin(nom(arret_actuel)):                                                                              #Pour tous les arrets voisins de l'arret observé                           
             if proche != depart and proche != arrivee:
                 afficherArret(proche, "orange")
+                afficherDuree(tmp)
             if indice_som(proche) not in marque:      #Si l'arret n'est pas déjà marqué (on pourra pas l'ameliorer de toute facon)
                 afficherArret(proche, "purple")
+                afficherDuree(tmp)
                 sleep(0.01)
                 if distance[indice_som(proche)][0]>distance[arret_actuel][0]+distarc(nom(arret_actuel),proche):               #Si ce nouveau chemin est plus avantageux que l'ancien 
                     distance[indice_som(proche)]=(distance[arret_actuel][0]+distarc(nom(arret_actuel),proche),arret_actuel)   #On met a jour sa distance et son prédécesseur
@@ -83,6 +102,7 @@ def dijkstra_graphique(depart,arrivee,win):
         marque.append(arret_actuel)                                    #On ajoute l'arret actuel dans les arrets marqués                                  
 
     afficherArret(arrivee, "blue")
+    afficherDuree(tmp)
     
     # Reconstruction
     arret_actuel=indice_som(arrivee)                             #On parcours les arrets en commançant par l'arrivée
@@ -103,15 +123,19 @@ def dijkstra_graphique(depart,arrivee,win):
             
     afficherArret(depart, "blue")
     afficherArret(arrivee, "blue")
-
     chemin.reverse()                                            #On inverse la liste pour obtenir le chemin dans le bon ordre (départ vers arrivée)
     return (chemin,round(distance[indice_som(arrivee)][0]))      # Renvoie : chemin (liste), distance (entier)
 
 dijkstra("NOVE","TROICR")
 
-def ford_graphique(depart,arrivee,win):
+def bellman_graphique(depart,arrivee,win):
     """Cette fonction prend en paramètres deux arrêts et renvoie le plus court chemin, sous forme de la liste des arrêts parcourus ainsi, que la distance minimum en utilisant la 
     méthode de Bellman Ford-Kalaba."""
+    tps_exec=Text(Point(73,117), "Temps d'exécution :")
+    tps_exec.draw(win)
+    tmp=t.time()
+    afficherDuree(tmp)
+    
     distance=[(np.Inf,None) for _ in range(len(nom_arrets))]    #Tous les arrets ont une distances infinie et pas de predécesseur
     distance[indice_som(depart)]=(0,indice_som(depart))         #On ajoute la distance de l'arret de départ soit 0, son pred est lui même
     a_traiter=[indice_som(depart)]                              #Une liste de tous les arrets que l'ont doit traiter
@@ -119,26 +143,20 @@ def ford_graphique(depart,arrivee,win):
     afficherArret(arrivee, "blue")
     while a_traiter!=[]:                                        #Tant que cette liste n'est pas vide on continue la recherche, on assume donc qu'il n'y a pas de chemins absorbants
         distancepred=distance[:]                                #Copie de la liste de distance afin de la comparer après l'étape
-        for atraiter in a_traiter:
-            if nom(atraiter) != depart and nom(atraiter) != arrivee:
-                affichage = Circle(Point((arrets[nom(atraiter)][1]-minLong)*ratio+5,
-                          delta-(arrets[nom(atraiter)][0]-minLat)*facteur_Y+5),4)
-                affichage.setFill("purple")
-                affichage.draw(win)
-        for arret_actuel in a_traiter:                                                                          #L'arrets en cours de traitement                                                                      
+        for arret_actuel in a_traiter:
+            if nom(arret_actuel) != depart and nom(arret_actuel) != arrivee:
+                afficherArret(nom(arret_actuel),"purple")                                                                        #L'arrets en cours de traitement                                                                      
             for proche in voisin(nom(arret_actuel)):                                                            #Pour tous les arrets voisins de l'arret observé
+                afficherDuree(tmp)
                 if proche != depart and proche != arrivee:
-                    affichage = Circle(Point((arrets[proche][1]-minLong)*ratio+5,
-                              delta-(arrets[proche][0]-minLat)*facteur_Y+5),4)
-                    affichage.setFill("coral1")
-                    affichage.draw(win)
+                    afficherArret(proche,"orange")
                 if distance[indice_som(proche)][0]>distance[arret_actuel][0]+distarc(nom(arret_actuel),proche):         #Si ce nouveau chemin est plus avantageux que l'ancien      
                     distance[indice_som(proche)]=(distance[arret_actuel][0]+distarc(nom(arret_actuel),proche),arret_actuel)     #On met a jour sa distance et son prédécesseur 
                     sleep(0.001)
                     
         a_traiter=difference(distance,distancepred)             #on récupere tous les arrets qui ont était mis a jour dans l'étape
                                                                 #Opération faite après l'étape pour ne pas interferer avec les données de l'étape
-    
+    afficherDuree(tmp)
     # Reconstruction
     chemin=[arrivee]                                             #On crée une liste de allant de l'arrivée vers le depart
     arret_actuel=indice_som(arrivee)                             #On parcours les arrets en commançant par l'arrivée
@@ -146,36 +164,14 @@ def ford_graphique(depart,arrivee,win):
         pred=distance[arret_actuel][1]                          #Prédécesseur de l'arret actuel   
         chemin.append(nom(pred))                                #On ajoute le Prédécesseur au chemin 
         arret_actuel=pred                                       #L'arret actuel devient le prédécesseur
-    
-    affichage = Circle(Point((arrets[depart][1]-minLong)*ratio+5,
-              delta-(arrets[depart][0]-minLat)*facteur_Y+5),4)
-    affichage.setFill("blue")
-    affichage.draw(win)
-    affichage = Line(Point((arrets[arrivee][1]-minLong)*ratio+5,
-                delta-(arrets[arrivee][0]-minLat)*facteur_Y+5),
-         Point((arrets[chemin[1]][1]-minLong)*ratio+5,
-                delta-(arrets[chemin[1]][0]-minLat)*facteur_Y+5))
-    affichage.setWidth(3)
-    affichage.setFill("green")
-    affichage.draw(win)
+    afficherArret(depart,"blue")
+    tracerArc(arrivee,chemin[1],"green",3)
     for i in range(len(chemin)):
         if chemin[i]!=arrivee and chemin[i]!=depart:
-            affichage = Line(Point((arrets[chemin[i]][1]-minLong)*ratio+5,
-                        delta-(arrets[chemin[i]][0]-minLat)*facteur_Y+5),
-                 Point((arrets[chemin[i+1]][1]-minLong)*ratio+5,
-                        delta-(arrets[chemin[i+1]][0]-minLat)*facteur_Y+5))
-            affichage.setWidth(3)
-            affichage.setFill("green")
-            affichage.draw(win)
-            affichage = Circle(Point((arrets[chemin[i]][1]-minLong)*ratio+5,
-                      delta-(arrets[chemin[i]][0]-minLat)*facteur_Y+5),4)
-            affichage.setFill("green")
-            affichage.draw(win)
+            tracerArc(chemin[i],chemin[i+1],"green",3)
+            afficherArret(chemin[i],"green")
             sleep(0.1)
-    affichage = Circle(Point((arrets[arrivee][1]-minLong)*ratio+5,
-              delta-(arrets[arrivee][0]-minLat)*facteur_Y+5),4)
-    affichage.setFill("blue")
-    affichage.draw(win)
+    afficherArret(arrivee,"blue")
     chemin.reverse()                                           #On inverse la liste pour obtenir le chemin depart->arrivée
     return (chemin,round(distance[indice_som(arrivee)][0]))            #On retourne le chemin et la distance entre ces deux arrets
 
@@ -183,6 +179,10 @@ def ford_graphique(depart,arrivee,win):
 def floyd_graphique(depart,arrivee,win):
     """Cette fonction prend en paramètres deux arrêts et renvoient le plus court chemin, sous forme de la liste des arrêts parcourus ainsi, que la distance minimum en utilisant la 
     méthode de floyd wharshall."""
+    tps_exec=Text(Point(73,117), "Temps d'exécution :")
+    tps_exec.draw(win)
+    tmp=t.time()
+    afficherDuree(tmp)
     M0=[x[:] for x in poids_bus]                                #Initialisation de M0
     P0=[x[:] for x in poids_bus]                                #Initialisation de P0
     #Initialisation des prédécesseurs
@@ -203,6 +203,7 @@ def floyd_graphique(depart,arrivee,win):
     for k in range(n):
         if nom(k)!=depart and nom(k)!=arrivee:
             afficherArret(nom(k),"orange",True)
+            afficherDuree(tmp)
         for i in range (n):
             for j in range (n):
                 # Application de la formule permettant de passer de PN à PN+1
@@ -210,6 +211,7 @@ def floyd_graphique(depart,arrivee,win):
                     M0[i][j]=M0[k][j]+M0[i][k]
                     P0[i][j]=P0[k][j]
         # Remarque : On écrase les matrices car toutes les informations sont contenues dans les matrices finales
+    afficherDuree(tmp)
     # Reconstruction
     arret_actuel=indice_som(arrivee)
     chemin=[nom(arret_actuel)]
@@ -226,43 +228,52 @@ def floyd_graphique(depart,arrivee,win):
 
     for i in range(len(chemin)):
         if chemin[i]!=arrivee and chemin[i]!=depart:
-            affichage = Line(Point((arrets[chemin[i]][1]-minLong)*ratio+5,
-                        delta-(arrets[chemin[i]][0]-minLat)*facteur_Y+5),
-                 Point((arrets[chemin[i+1]][1]-minLong)*ratio+5,
-                        delta-(arrets[chemin[i+1]][0]-minLat)*facteur_Y+5))
-            affichage.setWidth(3)
-            affichage.setFill("green")
-            affichage.draw(win)
-            affichage = Circle(Point((arrets[chemin[i]][1]-minLong)*ratio+5,
-                      delta-(arrets[chemin[i]][0]-minLat)*facteur_Y+5),4)
-            affichage.setFill("green")
-            affichage.draw(win)
+            tracerArc(chemin[i],chemin[i+1],"green",3)
+            afficherArret(chemin[i],"green")
             sleep(0.1)
-    affichage = Circle(Point((arrets[arrivee][1]-minLong)*ratio+5,
-              delta-(arrets[arrivee][0]-minLat)*facteur_Y+5),4)
-    affichage.setFill("blue")
-    affichage.draw(win)
+    afficherArret(arrivee,"blue")
     
     chemin.reverse()                                            #On inverse la liste pour obtenir le chemin dans le bon ordre (départ vers arrivée)
     return (chemin,round(M0[indice_som(depart)][indice_som(arrivee)]))
 
+
+def aide_touches():
+    appuyez_text=Text(Point(50,10), "Appuyez sur :")
+    appuyez_text.draw(win)
+    
+    dijkstra_text=Text(Point(55,28), "D pour Dijkstra")
+    dijkstra_text.draw(win)
+    
+    bellman_text=Text(Point(56,48), "B pour Bellman")
+    bellman_text.draw(win)
+    
+    floyd_text=Text(Point(47,68), "F pour Floyd")
+    floyd_text.draw(win)
+    
+    autre_text=Text(Point(161,88), "Une autre touche pour terminer le programme")
+    autre_text.draw(win)
+    
 def dessinerGraphe():
     win.delete('all')
     fond_carte = Image(Point(int(windowWidth/2),int(windowHeight/2)+1), "fond_carte.png")
     fond_carte.draw(win)
-
+    aide_touches()
     for i in arrets:
         for j in arrets[i][2]:
             tracerArc(i,j)
     for i in arrets:
         afficherArret(i,"black",False)
-        
+
+
+    
 pressed_key=None
 def random_arret():
     global pressed_key
     while True:
         if pressed_key == None :
             dessinerGraphe()
+            
+            
             pressed_key = win.getKey()
         if pressed_key=="d":
             dessinerGraphe()
@@ -275,7 +286,7 @@ def random_arret():
             dessinerGraphe()
             arret1 = random.choice(list(arrets.keys()))
             arret2 = random.choice(list(arrets.keys()))
-            ford_graphique(arret1,arret2,win)
+            bellman_graphique(arret1,arret2,win)
             pressed_key = win.getKey()
             random_arret()
         if pressed_key=="f":
@@ -291,6 +302,8 @@ def random_arret():
     
 
 def main(arret1,arret2):
+
+    
     dessinerGraphe()
     dijkstra_graphique(arret1,arret2,win)
     win.getMouse()  
