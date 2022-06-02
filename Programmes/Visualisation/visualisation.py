@@ -72,7 +72,7 @@ def afficherDuree(tmpDepart):
 def dijkstra_graphique(depart,arrivee,win):
     '''Cette fonction prend en paramètres deux arrêts et renvoie le plus court chemin, sous forme de la liste des arrêts parcourus ainsi, que la distance minimum en
     utilisant la méthode de Djiksrta.'''
-    tps_exec=Text(Point(73,117), "Temps d'exécution :")
+    tps_exec=Text(Point(73,117), "Temps d'execution :")
     tps_exec.draw(win)
     tmp=t.time()
     afficherDuree(tmp)
@@ -131,7 +131,7 @@ dijkstra("NOVE","TROICR")
 def bellman_graphique(depart,arrivee,win):
     """Cette fonction prend en paramètres deux arrêts et renvoie le plus court chemin, sous forme de la liste des arrêts parcourus ainsi, que la distance minimum en utilisant la 
     méthode de Bellman Ford-Kalaba."""
-    tps_exec=Text(Point(73,117), "Temps d'exécution :")
+    tps_exec=Text(Point(73,117), "Temps d'execution :")
     tps_exec.draw(win)
     tmp=t.time()
     afficherDuree(tmp)
@@ -179,7 +179,7 @@ def bellman_graphique(depart,arrivee,win):
 def floyd_graphique(depart,arrivee,win):
     """Cette fonction prend en paramètres deux arrêts et renvoient le plus court chemin, sous forme de la liste des arrêts parcourus ainsi, que la distance minimum en utilisant la 
     méthode de floyd wharshall."""
-    tps_exec=Text(Point(73,117), "Temps d'exécution :")
+    tps_exec=Text(Point(73,117), "Temps d'execution :")
     tps_exec.draw(win)
     tmp=t.time()
     afficherDuree(tmp)
@@ -309,4 +309,4 @@ def main(arret1,arret2):
     win.getMouse()  
     win.close()
     
-random_arret()
+main("NOVE","TROICR")
