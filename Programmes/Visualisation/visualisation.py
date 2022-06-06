@@ -57,7 +57,7 @@ def tracerArc(arret1,arret2,couleur="black",largeur=1):
     affichage.setWidth(largeur)
     affichage.draw(win)
 
-appuyez_text="allala"
+appuyez_text="init"
 def afficherDuree(tmpDepart):
     global appuyez_text
     try:
@@ -306,7 +306,10 @@ def main(arret1,arret2):
     
     dessinerGraphe()
     dijkstra_graphique(arret1,arret2,win)
-    win.getMouse()  
-    win.close()
+    win.getMouse()
+    random_arret()
     
 main("NOVE","TROICR")
+
+
+#random_arret()
