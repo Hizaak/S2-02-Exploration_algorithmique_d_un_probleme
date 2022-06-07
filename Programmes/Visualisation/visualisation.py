@@ -1,6 +1,6 @@
 from graphics import *
 from methodes import *
-
+from random import *
 from time import sleep
 import time as t
 import random
@@ -40,12 +40,13 @@ else:
 
 
 
-def afficherArret(arret,couleur,fill=True):
+def afficherArret(arret,couleur,fill=True,taille=4):
     affichage = Circle(Point((arrets[arret][1]-minLong)*ratio,
-                             windowHeight-(arrets[arret][0]-minLat)*ratio*1.37),4)
+                             windowHeight-(arrets[arret][0]-minLat)*ratio*1.37),taille)
     if fill:
         affichage.setFill(couleur)
     affichage.draw(win)
+    return affichage
 
 
 def tracerArc(arret1,arret2,couleur="black",largeur=1):
@@ -56,6 +57,7 @@ def tracerArc(arret1,arret2,couleur="black",largeur=1):
     affichage.setFill(couleur)
     affichage.setWidth(largeur)
     affichage.draw(win)
+    return affichage
 
 appuyez_text="init"
 def afficherDuree(tmpDepart):
@@ -65,7 +67,7 @@ def afficherDuree(tmpDepart):
     except:
         pass
     duree = t.time() - tmpDepart
-    appuyez_text=Text(Point(27,138), str(round(duree,2))+"s")
+    appuyez_text=Text(Point(45,138), str(round(duree,2))+"s")
     appuyez_text.draw(win)
 
     
@@ -202,14 +204,28 @@ def floyd_graphique(depart,arrivee,win):
     k=0 # Numéro de l'étape (= tous les chemins de longueur <= k)
     for k in range(n):
         if nom(k)!=depart and nom(k)!=arrivee:
-            afficherArret(nom(k),"orange",True)
+            random_red=random.randrange(0,255)
+            random_green=random.randrange(0,255)
+            random_blue=random.randrange(0,255)
+            arret_courant=afficherArret(nom(k),color_rgb(random_red,random_green,random_blue),True,2)
             afficherDuree(tmp)
+
+            
         for i in range (n):
+            afficherArret(nom(k),color_rgb(random_red,random_green,random_blue),True)
+            if nom(i)!=depart and nom(i)!=arrivee:
+                afficherDuree(tmp)
+                affichage=tracerArc(nom(i), nom(k),color_rgb(random_red,random_green,random_blue),2)
+                
+                if nom(i)!=nom(k):
+                    afficherArret(nom(i),color_rgb(random_red,random_green,random_blue),True)
+                    #affichage.undraw()
             for j in range (n):
                 # Application de la formule permettant de passer de PN à PN+1
                 if M0[k][j]+M0[i][k]<M0[i][j]:
                     M0[i][j]=M0[k][j]+M0[i][k]
                     P0[i][j]=P0[k][j]
+        arret_courant.undraw()
         # Remarque : On écrase les matrices car toutes les informations sont contenues dans les matrices finales
     afficherDuree(tmp)
     # Reconstruction
@@ -309,7 +325,7 @@ def main(arret1,arret2):
     win.getMouse()
     random_arret()
     
-main("NOVE","TROICR")
+#main("NOVE","TROICR")
 
 
-#random_arret()
+random_arret()
