@@ -29,8 +29,6 @@ minLat-=0.002
 maxLong+=0.002
 maxLat+=0.002
 
-print(minLong,"minLong",minLat,"minLat",maxLong,"maxLong",maxLat,"maxLat")
-
 A=distanceGPS(43,44,0,0)
 B=distanceGPS(43,43,-1,0)
 
