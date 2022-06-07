@@ -2,8 +2,7 @@
 Authors : Nicolas DARGAZANLI et Alexandre MAURICE, en TD 1 TP 1
 Remarque : A* n'est pas fonctionnel mais les traces du code sont laissées
 """
-from time import sleep
-from graphics import *
+
 import pandas as pd
 from math import sin, cos, acos, pi
 import numpy as np
