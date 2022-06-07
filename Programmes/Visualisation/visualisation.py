@@ -5,17 +5,14 @@ from time import sleep
 import time as t
 import random
 
-windowWidth = 1070
-windowHeight = 981
+windowWidth = 1023
+windowHeight = 950
 win = GraphWin("Reseau Chronoplus", windowWidth, windowHeight)
-
-
 
 minLong=np.Inf
 minLat=np.Inf
 maxLong=np.NINF
 maxLat=np.NINF
-
 
 for i in arrets:
     if arrets[i][0] <= minLat:
@@ -32,17 +29,19 @@ minLat-=0.002
 maxLong+=0.002
 maxLat+=0.002
 
+print(minLong,"minLong",minLat,"minLat",maxLong,"maxLong",maxLat,"maxLat")
+
+A=distanceGPS(43,44,0,0)
+B=distanceGPS(43,43,-1,0)
+
 if maxLat-minLat > maxLong-minLong:
     ratio=windowHeight/(maxLat-minLat)
 else:
     ratio=windowWidth/(maxLong-minLong)
 
-
-
-
 def afficherArret(arret,couleur,fill=True,taille=4):
     affichage = Circle(Point((arrets[arret][1]-minLong)*ratio,
-                             windowHeight-(arrets[arret][0]-minLat)*ratio*1.37),taille)
+                             windowHeight-(arrets[arret][0]-minLat)*ratio*(A/B)),taille)
     if fill:
         affichage.setFill(couleur)
     affichage.draw(win)
@@ -51,9 +50,9 @@ def afficherArret(arret,couleur,fill=True,taille=4):
 
 def tracerArc(arret1,arret2,couleur="black",largeur=1):
     affichage = Line(Point((arrets[arret1][1]-minLong)*ratio,
-                           windowHeight-(arrets[arret1][0]-minLat)*ratio*1.37),
+                           windowHeight-(arrets[arret1][0]-minLat)*ratio*(A/B)),
                      Point((arrets[arret2][1]-minLong)*ratio,
-                            windowHeight-(arrets[arret2][0]-minLat)*ratio*1.37))
+                            windowHeight-(arrets[arret2][0]-minLat)*ratio*(A/B)))
     affichage.setFill(couleur)
     affichage.setWidth(largeur)
     affichage.draw(win)
@@ -199,7 +198,6 @@ def floyd_graphique(depart,arrivee,win):
     afficherArret(depart, "blue")
     afficherArret(arrivee, "blue")
     #-------------------------------------
-
     n=len(nom_arrets) # Taille de la matrice
     k=0 # Numéro de l'étape (= tous les chemins de longueur <= k)
     for k in range(n):
@@ -209,7 +207,6 @@ def floyd_graphique(depart,arrivee,win):
             random_blue=random.randrange(0,255)
             arret_courant=afficherArret(nom(k),color_rgb(random_red,random_green,random_blue),True,2)
             afficherDuree(tmp)
-
             
         for i in range (n):
             afficherArret(nom(k),color_rgb(random_red,random_green,random_blue),True)
@@ -249,7 +246,7 @@ def floyd_graphique(depart,arrivee,win):
             sleep(0.1)
     afficherArret(arrivee,"blue")
     
-    chemin.reverse()                                            #On inverse la liste pour obtenir le chemin dans le bon ordre (départ vers arrivée)
+    chemin.reverse()         #On inverse la liste pour obtenir le chemin dans le bon ordre (départ vers arrivée)
     return (chemin,round(M0[indice_som(depart)][indice_som(arrivee)]))
 
 
@@ -271,7 +268,7 @@ def aide_touches():
     
 def dessinerGraphe():
     win.delete('all')
-    fond_carte = Image(Point(int(windowWidth/2),int(windowHeight/2)+1), "fond_carte.png")
+    fond_carte = Image(Point(int(windowWidth/2)-1,int(windowHeight/2)+1), "fond_carte.png")
     fond_carte.draw(win)
     aide_touches()
     for i in arrets:
@@ -280,16 +277,12 @@ def dessinerGraphe():
     for i in arrets:
         afficherArret(i,"black",False)
 
-
-    
 pressed_key=None
 def random_arret():
     global pressed_key
     while True:
         if pressed_key == None :
             dessinerGraphe()
-            
-            
             pressed_key = win.getKey()
         if pressed_key=="d":
             dessinerGraphe()
@@ -316,16 +309,12 @@ def random_arret():
             win.close()
             return 0
     
-
 def main(arret1,arret2):
-
-    
     dessinerGraphe()
     dijkstra_graphique(arret1,arret2,win)
     win.getMouse()
     random_arret()
     
 #main("NOVE","TROICR")
-
 
 random_arret()
