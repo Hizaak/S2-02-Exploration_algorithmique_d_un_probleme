@@ -5,6 +5,7 @@ from time import sleep
 import time as t
 import random
 
+<<<<<<< HEAD
 windowWidth = 1023
 windowHeight = 950
 win = GraphWin("Reseau Chronoplus", windowWidth, windowHeight)
@@ -13,6 +14,41 @@ minLong=np.Inf
 minLat=np.Inf
 maxLong=np.NINF
 maxLat=np.NINF
+=======
+from time import sleep
+import time as t
+import random
+
+windowWidth = 1070
+windowHeight = 981
+win = GraphWin("Reseau Chronoplus", windowWidth, windowHeight)
+>>>>>>> main
+
+for i in arrets:
+    if arrets[i][0] <= minLat:
+        minLat=arrets[i][0]
+    if arrets[i][0] >= maxLat:
+        maxLat=arrets[i][0]
+    if arrets[i][1] <= minLong:
+        minLong=arrets[i][1]
+    if arrets[i][1] >= maxLong:
+        maxLong=arrets[i][1]
+
+<<<<<<< HEAD
+minLong-=0.002
+minLat-=0.002
+maxLong+=0.002
+maxLat+=0.002
+
+A=distanceGPS(43,44,0,0)
+B=distanceGPS(43,43,-1,0)
+=======
+
+minLong=np.Inf
+minLat=np.Inf
+maxLong=np.NINF
+maxLat=np.NINF
+
 
 for i in arrets:
     if arrets[i][0] <= minLat:
@@ -28,15 +64,14 @@ minLong-=0.002
 minLat-=0.002
 maxLong+=0.002
 maxLat+=0.002
-
-A=distanceGPS(43,44,0,0)
-B=distanceGPS(43,43,-1,0)
+>>>>>>> main
 
 if maxLat-minLat > maxLong-minLong:
     ratio=windowHeight/(maxLat-minLat)
 else:
     ratio=windowWidth/(maxLong-minLong)
 
+<<<<<<< HEAD
 def afficherArret(arret,couleur,fill=True,taille=4):
     affichage = Circle(Point((arrets[arret][1]-minLong)*ratio,
                              windowHeight-(arrets[arret][0]-minLat)*ratio*(A/B)),taille)
@@ -44,10 +79,22 @@ def afficherArret(arret,couleur,fill=True,taille=4):
         affichage.setFill(couleur)
     affichage.draw(win)
     return affichage
+=======
+
+
+
+def afficherArret(arret,couleur,fill=True):
+    affichage = Circle(Point((arrets[arret][1]-minLong)*ratio,
+                             windowHeight-(arrets[arret][0]-minLat)*ratio*1.37),4)
+    if fill:
+        affichage.setFill(couleur)
+    affichage.draw(win)
+>>>>>>> main
 
 
 def tracerArc(arret1,arret2,couleur="black",largeur=1):
     affichage = Line(Point((arrets[arret1][1]-minLong)*ratio,
+<<<<<<< HEAD
                            windowHeight-(arrets[arret1][0]-minLat)*ratio*(A/B)),
                      Point((arrets[arret2][1]-minLong)*ratio,
                             windowHeight-(arrets[arret2][0]-minLat)*ratio*(A/B)))
@@ -57,6 +104,16 @@ def tracerArc(arret1,arret2,couleur="black",largeur=1):
     return affichage
 
 appuyez_text="init"
+=======
+                           windowHeight-(arrets[arret1][0]-minLat)*ratio*1.37),
+                     Point((arrets[arret2][1]-minLong)*ratio,
+                            windowHeight-(arrets[arret2][0]-minLat)*ratio*1.37))
+    affichage.setFill(couleur)
+    affichage.setWidth(largeur)
+    affichage.draw(win)
+
+appuyez_text="allala"
+>>>>>>> main
 def afficherDuree(tmpDepart):
     global appuyez_text
     try:
@@ -64,14 +121,22 @@ def afficherDuree(tmpDepart):
     except:
         pass
     duree = t.time() - tmpDepart
+<<<<<<< HEAD
     appuyez_text=Text(Point(45,138), str(round(duree,2))+"s")
+=======
+    appuyez_text=Text(Point(27,138), str(round(duree,2))+"s")
+>>>>>>> main
     appuyez_text.draw(win)
 
     
 def dijkstra_graphique(depart,arrivee,win):
     '''Cette fonction prend en paramètres deux arrêts et renvoie le plus court chemin, sous forme de la liste des arrêts parcourus ainsi, que la distance minimum en
     utilisant la méthode de Djiksrta.'''
+<<<<<<< HEAD
     tps_exec=Text(Point(73,117), "Temps d'execution :")
+=======
+    tps_exec=Text(Point(73,117), "Temps d'exécution :")
+>>>>>>> main
     tps_exec.draw(win)
     tmp=t.time()
     afficherDuree(tmp)
@@ -125,10 +190,19 @@ def dijkstra_graphique(depart,arrivee,win):
     chemin.reverse()                                            #On inverse la liste pour obtenir le chemin dans le bon ordre (départ vers arrivée)
     return (chemin,round(distance[indice_som(arrivee)][0]))      # Renvoie : chemin (liste), distance (entier)
 
+<<<<<<< HEAD
 def bellman_graphique(depart,arrivee,win):
     """Cette fonction prend en paramètres deux arrêts et renvoie le plus court chemin, sous forme de la liste des arrêts parcourus ainsi, que la distance minimum en utilisant la 
     méthode de Bellman Ford-Kalaba."""
     tps_exec=Text(Point(73,117), "Temps d'execution :")
+=======
+dijkstra("NOVE","TROICR")
+
+def bellman_graphique(depart,arrivee,win):
+    """Cette fonction prend en paramètres deux arrêts et renvoie le plus court chemin, sous forme de la liste des arrêts parcourus ainsi, que la distance minimum en utilisant la 
+    méthode de Bellman Ford-Kalaba."""
+    tps_exec=Text(Point(73,117), "Temps d'exécution :")
+>>>>>>> main
     tps_exec.draw(win)
     tmp=t.time()
     afficherDuree(tmp)
@@ -171,12 +245,21 @@ def bellman_graphique(depart,arrivee,win):
     afficherArret(arrivee,"blue")
     chemin.reverse()                                           #On inverse la liste pour obtenir le chemin depart->arrivée
     return (chemin,round(distance[indice_som(arrivee)][0]))            #On retourne le chemin et la distance entre ces deux arrets
+<<<<<<< HEAD
 
 
 def floyd_graphique(depart,arrivee,win):
     """Cette fonction prend en paramètres deux arrêts et renvoient le plus court chemin, sous forme de la liste des arrêts parcourus ainsi, que la distance minimum en utilisant la 
     méthode de floyd wharshall."""
     tps_exec=Text(Point(73,117), "Temps d'execution :")
+=======
+
+
+def floyd_graphique(depart,arrivee,win):
+    """Cette fonction prend en paramètres deux arrêts et renvoient le plus court chemin, sous forme de la liste des arrêts parcourus ainsi, que la distance minimum en utilisant la 
+    méthode de floyd wharshall."""
+    tps_exec=Text(Point(73,117), "Temps d'exécution :")
+>>>>>>> main
     tps_exec.draw(win)
     tmp=t.time()
     afficherDuree(tmp)
@@ -194,6 +277,7 @@ def floyd_graphique(depart,arrivee,win):
     afficherArret(depart, "blue")
     afficherArret(arrivee, "blue")
     #-------------------------------------
+<<<<<<< HEAD
     n=len(nom_arrets) # Taille de la matrice
     k=0 # Numéro de l'étape (= tous les chemins de longueur <= k)
     for k in range(n):
@@ -211,6 +295,16 @@ def floyd_graphique(depart,arrivee,win):
                 if nom(i)!=nom(k):
                     afficherArret(nom(i),color_rgb(random_red,random_green,random_blue),True)
                     #affichage.undraw()
+=======
+
+    n=len(nom_arrets) # Taille de la matrice
+    k=0 # Numéro de l'étape (= tous les chemins de longueur <= k)
+    for k in range(n):
+        if nom(k)!=depart and nom(k)!=arrivee:
+            afficherArret(nom(k),"orange",True)
+            afficherDuree(tmp)
+        for i in range (n):
+>>>>>>> main
             for j in range (n):
                 # Application de la formule permettant de passer de PN à PN+1
                 if M0[k][j]+M0[i][k]<M0[i][j]:
@@ -239,7 +333,11 @@ def floyd_graphique(depart,arrivee,win):
             sleep(0.1)
     afficherArret(arrivee,"blue")
     
+<<<<<<< HEAD
     chemin.reverse()         #On inverse la liste pour obtenir le chemin dans le bon ordre (départ vers arrivée)
+=======
+    chemin.reverse()                                            #On inverse la liste pour obtenir le chemin dans le bon ordre (départ vers arrivée)
+>>>>>>> main
     return (chemin,round(M0[indice_som(depart)][indice_som(arrivee)]))
 
 
@@ -261,7 +359,11 @@ def aide_touches():
     
 def dessinerGraphe():
     win.delete('all')
+<<<<<<< HEAD
     fond_carte = Image(Point(int(windowWidth/2)-1,int(windowHeight/2)+1), "fond_carte.png")
+=======
+    fond_carte = Image(Point(int(windowWidth/2),int(windowHeight/2)+1), "fond_carte.png")
+>>>>>>> main
     fond_carte.draw(win)
     aide_touches()
     for i in arrets:
@@ -270,6 +372,7 @@ def dessinerGraphe():
     for i in arrets:
         afficherArret(i,"black",False)
 
+<<<<<<< HEAD
 pressed_key=None
 def random_arret():
     global pressed_key
@@ -326,3 +429,51 @@ Fonction montrant, avec deux arrêts pris au hasard, la démonstration des algor
 Les instructions sont affichées à l'écran. Veillez à bien attendre la fin de l'exécution d'une méthode avant d'agir sur le clavier.
 """
 # random_arret()
+=======
+
+    
+pressed_key=None
+def random_arret():
+    global pressed_key
+    while True:
+        if pressed_key == None :
+            dessinerGraphe()
+            
+            
+            pressed_key = win.getKey()
+        if pressed_key=="d":
+            dessinerGraphe()
+            arret1 = random.choice(list(arrets.keys()))
+            arret2 = random.choice(list(arrets.keys()))
+            dijkstra_graphique(arret1,arret2,win)
+            pressed_key = win.getKey()
+            random_arret()
+        if pressed_key=="b":
+            dessinerGraphe()
+            arret1 = random.choice(list(arrets.keys()))
+            arret2 = random.choice(list(arrets.keys()))
+            bellman_graphique(arret1,arret2,win)
+            pressed_key = win.getKey()
+            random_arret()
+        if pressed_key=="f":
+            dessinerGraphe()
+            arret1 = random.choice(list(arrets.keys()))
+            arret2 = random.choice(list(arrets.keys()))
+            floyd_graphique(arret1,arret2,win)
+            pressed_key = win.getKey()
+            random_arret()
+        else:
+            win.close()
+            return 0
+    
+
+def main(arret1,arret2):
+
+    
+    dessinerGraphe()
+    dijkstra_graphique(arret1,arret2,win)
+    win.getMouse()  
+    win.close()
+    
+random_arret()
+>>>>>>> main
