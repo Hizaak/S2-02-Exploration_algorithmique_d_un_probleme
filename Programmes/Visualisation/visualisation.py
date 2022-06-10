@@ -125,8 +125,6 @@ def dijkstra_graphique(depart,arrivee,win):
     chemin.reverse()                                            #On inverse la liste pour obtenir le chemin dans le bon ordre (départ vers arrivée)
     return (chemin,round(distance[indice_som(arrivee)][0]))      # Renvoie : chemin (liste), distance (entier)
 
-dijkstra("NOVE","TROICR")
-
 def bellman_graphique(depart,arrivee,win):
     """Cette fonction prend en paramètres deux arrêts et renvoie le plus court chemin, sous forme de la liste des arrêts parcourus ainsi, que la distance minimum en utilisant la 
     méthode de Bellman Ford-Kalaba."""
@@ -199,12 +197,10 @@ def floyd_graphique(depart,arrivee,win):
     n=len(nom_arrets) # Taille de la matrice
     k=0 # Numéro de l'étape (= tous les chemins de longueur <= k)
     for k in range(n):
-        if nom(k)!=depart and nom(k)!=arrivee:
-            random_red=random.randrange(0,255)
-            random_green=random.randrange(0,255)
-            random_blue=random.randrange(0,255)
-            arret_courant=afficherArret(nom(k),color_rgb(random_red,random_green,random_blue),True,2)
-            afficherDuree(tmp)
+        random_red=random.randrange(0,255)
+        random_green=random.randrange(0,255)
+        random_blue=random.randrange(0,255)
+        afficherDuree(tmp)
             
         for i in range (n):
             afficherArret(nom(k),color_rgb(random_red,random_green,random_blue),True)
@@ -220,7 +216,6 @@ def floyd_graphique(depart,arrivee,win):
                 if M0[k][j]+M0[i][k]<M0[i][j]:
                     M0[i][j]=M0[k][j]+M0[i][k]
                     P0[i][j]=P0[k][j]
-        arret_courant.undraw()
         # Remarque : On écrase les matrices car toutes les informations sont contenues dans les matrices finales
     afficherDuree(tmp)
     # Reconstruction
@@ -307,12 +302,27 @@ def random_arret():
             win.close()
             return 0
     
-def main(arret1,arret2):
+def main(arret1,arret2,methode):
     dessinerGraphe()
-    dijkstra_graphique(arret1,arret2,win)
+    if methode == "dijkstra":
+        dijkstra_graphique(arret1,arret2,win)
+    elif methode == "bellman":
+        bellman_graphique(arret1,arret2,win)
+    elif methode == "floyd":
+        floyd_graphique(arret1,arret2,win)
+                
     win.getMouse()
     random_arret()
     
-#main("NOVE","TROICR")
+"""
+Si vous souhaitez exécuter les algorithmes graphiquement entre deux arrêts précis :
+    Appelez main() en précisant, dans l'odre, l'arrêt N°1, l'arrêt N°2, et la méthode (dijkstra,bellman ou floyd)
+    Les trois paramètres sont des chaines de caractères
+"""
+main("NOVE","TROICR","floyd")
 
-random_arret()
+"""
+Fonction montrant, avec deux arrêts pris au hasard, la démonstration des algorithmes
+Les instructions sont affichées à l'écran. Veillez à bien attendre la fin de l'exécution d'une méthode avant d'agir sur le clavier.
+"""
+# random_arret()
