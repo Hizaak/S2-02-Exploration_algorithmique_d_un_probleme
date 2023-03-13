@@ -33,5 +33,6 @@ C'est un algorithme de recherche de chemin qui **utilise une heuristique pour gu
 ![Floyd-Warshall](https://github.com/Hizaak/S2-02-Exploration_algorithmique_d_un_probleme/blob/main/Sources/Floyd.PNG)
 
 ## Les limitations
-- Chronoplus / Txik Txak ne fournit pas d'API, et donc l'application n'évolue pas au fur et à mesure des changements de l'offre de transport.
+- Chronoplus / Txik Txak ne fournit pas d'API, et donc l'application n'évolue pas au fur et à mesure des changements de l'offre de transport. Un scrapping a été réalisé par Nicolas ([source](https://github.com/noenic/txiktxak-web-scraper)), prouvant que cela aurait été réalisable, mais le temps pour récolter les données devient extrêmement conséquent et les données obtenues ne sont absolument pas traitables de manière automatisées étant donné que le site est encore en échaffaudage.
 - L'application ne prend pas en compte les horaires de passage des bus, puisque cela n'était pas demandé dans le sujet, mais cela aurait été intéressant à implémenter.
+- Utiliser une visualisation avec une image fixe limite énormément les possibilités, nous aurions pu coupler ça avec une API Web pour afficher les données sur une carte dynamique ou un globe.
