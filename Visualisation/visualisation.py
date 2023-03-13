@@ -319,10 +319,10 @@ Si vous souhaitez exécuter les algorithmes graphiquement entre deux arrêts pr�
     Appelez main() en précisant, dans l'odre, l'arrêt N°1, l'arrêt N°2, et la méthode (dijkstra,bellman ou floyd)
     Les trois paramètres sont des chaines de caractères
 """
-main("NOVE","TROICR","floyd")
+# main("NOVE","TROICR","floyd")
 
 """
 Fonction montrant, avec deux arrêts pris au hasard, la démonstration des algorithmes
 Les instructions sont affichées à l'écran. Veillez à bien attendre la fin de l'exécution d'une méthode avant d'agir sur le clavier.
 """
-# random_arret()
+random_arret()
